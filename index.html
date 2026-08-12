@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MES Workstation Checksheet</title>
+
+<style>
+    body{
+    background:#f1f5f9;
+    font-family:'Segoe UI',Tahoma,sans-serif;
+    margin:0;
+    padding:25px;
+}
+
+.header-section,
+.checklist-container,
+.card{
+    padding:20px;
+    text-align:center;
+    min-height:100px;
+}
+
+.card h2{
+    font-size:32px;
+    margin-top:10px;
+    color:#003b8e;
+}
+
+.header-section{
+    padding:20px;
+    text-align:left;
+}
+
+.title-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+#auditID{
+    color:#003b8e;
+    font-weight:bold;
+    font-size:18px;
+}
+
+h1{
+    color:#003b8e;
+    margin:0;
+    font-size:34px;
+    font-weight:700;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(250px,1fr));
+    gap:20px;
+    margin-top:25px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+}
+
+input,
+select{
+    padding:10px;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+}
+
+.legend{
+    margin:20px 0;
+    display:flex;
+    gap:25px;
+    font-weight:600;
+    justify-content:flex-start;
+}
+
+.good{
+    color:#16a34a;
+}
+
+.ng{
+    color:#dc2626;
+}
+
+.norun{
+    color:#6b7280;
+}
+
+.checklist-container{
+    padding:15px;
+}
+
+.mes-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.mes-table th{
+    background:#003b8e;
+    color:white;
+    padding:12px;
+}
+
+.mes-table td{
+    border:1px solid #d1d5db;
+    padding:12px;
+    font-size:14px;
+}
+
+.mes-table tr:hover{
+    background:#f8fafc;
+}
+
+.section-header td{
+    background:#00296b;
+    color:white;
+    font-weight:bold;
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:15px;
+    margin-top:20px;
+}
+
+.card{
+    padding:15px;
+    text-align:center;
+    border-radius:12px;
+    transition:all .3s ease;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 20px rgba(0,0,0,.1);
+}
+
+.progress-bar{
+    width:100%;
+    height:32px;
+    background:#e5e7eb;
+    border-radius:30px;
+    overflow:hidden;
+}
+
+#progressFill{
+    width:0%;
+    height:100%;
+    background:#22c55e;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.approval-section{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:15px;
+    margin-top:20px;
+}
+
+.export-btn{
+    margin-top:20px;
+    background:#003b8e;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:12px 25px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.export-btn:hover{
+    background:#00296b;
+}
+
+.field label{
+    font-weight:600;
+    margin-bottom:6px;
+    color:#003b8e;
+}
+body{
+    background:#eef3f9;
+    font-family:'Segoe UI',Tahoma,sans-serif;
+}
+
+.header-section,
+.checklist-container,
+.dashboard,
+.approval-section{
+    background:white;
+    border-radius:16px;
+    box-shadow:0 4px 20px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+
+h1{
+    color:#003b8e;
+    font-size:38px;
+    font-weight:700;
+}
+
+.field label{
+    color:#003b8e;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+input,
+select{
+    width:100%;
+    box-sizing:border-box;
+    transition:.3s;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border-color:#003b8e;
+    box-shadow:0 0 10px rgba(0,59,142,.25);
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.mes-table th{
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.export-btn{
+    transition:.3s;
+}
+
+.export-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 15px rgba(0,59,142,.25);
+}
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.header-section,
+.checklist-container,
+.dashboard,
+.approval-section{
+    animation:fadeUp .5s ease;
+}
+
+</style>
+
+</head>
+
+<body>
+<div class="header-section">
+
+<div class="title-bar">
+
+    <div>
+        <h1>MES WORKSTATION CHECKSHEET</h1>
+        <p>FPCA Compliance Verification System</p>
+    </div>
+
+</div>
+
+<div class="info-grid">
+
+    <div class="field">
+        <label>Operator Name</label>
+        <input type="text" id="operator">
+    </div>
+
+    <div class="field">
+        <label>Employee ID</label>
+        <input type="text" id="empid">
+    </div>
+
+    <div class="field">
+        <label>Date</label>
+        <input type="date" id="date">
+    </div>
+
+    <div class="field">
+        <label>Shift</label>
+        <select id="shift">
+            <option>Day Shift</option>
+            <option>Night Shift</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Process</label>
+        <select id="process">
+            <option value="">Select Process</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Workstation</label>
+        <select id="workstation">
+            <option value="">Select Workstation</option>
+            <option value="Frontend">Frontend</option>
+            <option value="Backend">Backend</option>
+        </select>
+    </div>
+
+</div>
+
+</div>
+<div class="legend">
+
+<span class="good">🟢 GOOD</span>
+
+<span class="ng">🔴 NO GOOD</span>
+
+<span class="norun">⚪ NO RUN</span>
+
+</div>
+<div class="checklist-container">
+
+<table class="mes-table">
+
+<thead>
+
+<tr>
+<th>No.</th>
+<th>Activity Details</th>
+<th>GOOD</th>
+<th>NO GOOD</th>
+<th>NO RUN</th>
+<th>Remarks</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr class="section-header">
+    <td colspan="6">
+        I. 7S COMPLIANCE ON WORKSTATION
+    </td>
+</tr>
+
+<tr>
+    <td>1</td>
+    <td>NO dust/dirt and other foreign materials on your working area.</td>
+    <td><input type="radio" name="a1" value="GOOD"></td>
+    <td><input type="radio" name="a1" value="NO GOOD"></td>
+    <td><input type="radio" name="a1" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="1">
+</td>
+</tr>
+
+<tr>
+    <td>2</td>
+    <td>NO trash such as paper, plastic, or any eye sore.</td>
+    <td><input type="radio" name="a2" value="GOOD"></td>
+    <td><input type="radio" name="a2" value="NO GOOD"></td>
+    <td><input type="radio" name="a2" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="2">
+</td>
+</tr>
+
+<tr>
+    <td>3</td>
+    <td>NO personal items such as wallet, pouch, etc.</td>
+    <td><input type="radio" name="a3" value="GOOD"></td>
+    <td><input type="radio" name="a3" value="NO GOOD"></td>
+    <td><input type="radio" name="a3" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="3">
+</td>
+</tr>
+
+<tr>
+    <td>4</td>
+    <td>NO personal hygiene kit such as make-up, powder, etc.</td>
+    <td><input type="radio" name="a4" value="GOOD"></td>
+    <td><input type="radio" name="a4" value="NO GOOD"></td>
+    <td><input type="radio" name="a4" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="4">
+</td>
+</tr>
+
+<tr class="section-header">
+    <td colspan="6">
+        II. QUALITY COMPLIANCE ON WORKSTATION
+    </td>
+</tr>
+
+<tr>
+    <td>5</td>
+    <td>I am a CERTIFIED / QUALIFIED operator on this workstation.</td>
+    <td><input type="radio" name="a5" value="GOOD"></td>
+    <td><input type="radio" name="a5" value="NO GOOD"></td>
+    <td><input type="radio" name="a5" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="5">
+</td>
+</tr>
+
+<tr>
+    <td>6</td>
+    <td>I have a COMPLETE, CONTROLLED and UPDATED W.I on the units I am processing.</td>
+    <td><input type="radio" name="a6" value="GOOD"></td>
+    <td><input type="radio" name="a6" value="NO GOOD"></td>
+    <td><input type="radio" name="a6" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="6">
+</td>
+</tr>
+
+<tr>
+    <td>7</td>
+    <td>I am processing ONE UNIT / LOT at a time.</td>
+    <td><input type="radio" name="a7" value="GOOD"></td>
+    <td><input type="radio" name="a7" value="NO GOOD"></td>
+    <td><input type="radio" name="a7" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="7">
+</td>
+</tr>
+
+<tr>
+    <td>8</td>
+    <td>I am wearing the REQUIRED PPE and COMPLIED with ESD standards.</td>
+    <td><input type="radio" name="a8" value="GOOD"></td>
+    <td><input type="radio" name="a8" value="NO GOOD"></td>
+    <td><input type="radio" name="a8" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="8">
+</td>
+</tr>
+
+<tr>
+    <td>9</td>
+    <td>I am using the CORRECT trays/bins/containers (GOOD, NG & HOLD units).</td>
+    <td><input type="radio" name="a9" value="GOOD"></td>
+    <td><input type="radio" name="a9" value="NO GOOD"></td>
+    <td><input type="radio" name="a9" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="9">
+</td>
+</tr>
+
+<tr>
+    <td>10</td>
+    <td>I am following the traceability requirements on my workstation.</td>
+    <td><input type="radio" name="a10" value="GOOD"></td>
+    <td><input type="radio" name="a10" value="NO GOOD"></td>
+    <td><input type="radio" name="a10" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="10">
+</td>
+</tr>
+
+<tr>
+    <td>11</td>
+    <td>The equipment/tools/jigs on my workstation are CHECKED / QUALIFIED / CALIBRATED.</td>
+    <td><input type="radio" name="a11" value="GOOD"></td>
+    <td><input type="radio" name="a11" value="NO GOOD"></td>
+    <td><input type="radio" name="a11" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="11">
+</td>
+</tr>
+
+<tr class="section-header">
+    <td colspan="6">
+        III. SAFETY COMPLIANCE ON WORKSTATION
+    </td>
+</tr>
+
+<tr>
+    <td>12</td>
+    <td>There is NO exposed live electrical wires on my workstation.</td>
+    <td><input type="radio" name="a12" value="GOOD"></td>
+    <td><input type="radio" name="a12" value="NO GOOD"></td>
+    <td><input type="radio" name="a12" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="12">
+</td>
+</tr>
+
+<tr>
+    <td>13</td>
+    <td>There is NO octopus connections under and beneath my workstation.</td>
+    <td><input type="radio" name="a13" value="GOOD"></td>
+    <td><input type="radio" name="a13" value="NO GOOD"></td>
+    <td><input type="radio" name="a13" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="13">
+</td>
+</tr>
+
+<tr>
+    <td>14</td>
+    <td>There is NO SHARP edges or corners on my workstation that may harm me.</td>
+    <td><input type="radio" name="a14" value="GOOD"></td>
+    <td><input type="radio" name="a14" value="NO GOOD"></td>
+    <td><input type="radio" name="a14" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="14">
+</td>
+</tr>
+
+<tr>
+    <td>15</td>
+    <td>I have PROPER and COMPLETE tools in performing my job on my workstation.</td>
+    <td><input type="radio" name="a15" value="GOOD"></td>
+    <td><input type="radio" name="a15" value="NO GOOD"></td>
+    <td><input type="radio" name="a15" value="NO RUN"></td>
+    <td>
+    <input
+    type="text"
+    class="remarks"
+    data-item="15">
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+<div class="dashboard">
+
+<div class="card">
+<h3>Completion</h3>
+
+<div class="progress-bar">
+<div id="progressFill">0%</div>
+</div>
+</div>
+
+<div class="card">
+<h3>GOOD</h3>
+<h2 id="goodCount">0</h2>
+</div>
+
+<div class="card">
+<h3>NO GOOD</h3>
+<h2 id="ngCount">0</h2>
+</div>
+
+<div class="card">
+<h3>NO RUN</h3>
+<h2 id="nrCount">0</h2>
+</div>
+
+</div>
+<div class="approval-section">
+
+<div class="field">
+<label>Supervisor Name</label>
+<input type="text" id="supervisorName">
+</div>
+
+<div class="field">
+<label>Status</label>
+
+<select id="approvalStatus">
+<option>Pending</option>
+<option>Approved</option>
+<option>Rejected</option>
+</select>
+
+</div>
+
+<div class="field">
+<label>Date Approved</label>
+<input type="datetime-local" id="approvedDate">
+</div>
+
+</div>
+<div class="button-container">
+
+<button
+id="exportBtn"
+class="export-btn">
+
+📄 EXPORT CSV
+
+</button>
+
+</div>
+<script>
+
+/* FPCA WORKSTATION PROCESS */
+
+const processData = {
+
+    Frontend: [
+        "Part Preparation",
+        "Flex Baking",
+        "SPA Palletizing",
+        "SPI",
+        "SMT",
+        "Reflow Curing",
+        "XRAY"
+    ],
+
+    Backend: [
+        "Encapsulation / Underfill",
+        "Post Baking",
+        "Washing",
+        "Damper Attachment / Damper Push",
+        "Label Attachment / Label Scanning",
+        "FT",
+        "FVI",
+        "SI",
+        "OBA",
+        "SSI",
+        "Scanning",
+        "Packing"
+    ]
+
+};
+
+document
+.getElementById("workstation")
+.addEventListener("change", function(){
+
+    const process =
+    document.getElementById("process");
+
+    process.innerHTML =
+    '<option value="">Select Process</option>';
+
+    if (!processData[this.value]) return;
+
+    processData[this.value].forEach(item => {
+
+        const option =
+        document.createElement("option");
+
+        option.value = item;
+        option.textContent = item;
+
+        process.appendChild(option);
+
+    });
+
+});
+
+
+/* AUTO SAVE */
+
+const inputs =
+document.querySelectorAll(
+"input, select"
+);
+
+inputs.forEach(input => {
+
+    input.addEventListener(
+        "change",
+        saveForm
+    );
+
+});
+
+function saveForm(){
+
+    const form = {};
+
+    inputs.forEach(input => {
+
+        if(input.type === "radio"){
+
+            if(input.checked){
+
+                form[input.name] =
+                input.value;
+
+            }
+
+        }else{
+
+            if(input.id){
+
+                form[input.id] =
+                input.value;
+
+            }
+
+        }
+
+    });
+
+    localStorage.setItem(
+        "MES_FORM",
+        JSON.stringify(form)
+    );
+
+}
+
+
+/* DASHBOARD */
+
+const totalItems = 15;
+
+document
+.querySelectorAll('input[type="radio"]')
+.forEach(radio => {
+
+    radio.addEventListener(
+        "change",
+        updateDashboard
+    );
+
+});
+
+function updateDashboard(){
+
+    let good = 0;
+    let ng = 0;
+    let nr = 0;
+    let completed = 0;
+
+    for(let i = 1; i <= totalItems; i++){
+
+        const selected =
+        document.querySelector(
+        `input[name="a${i}"]:checked`
+        );
+
+        if(selected){
+
+            completed++;
+
+            if(selected.value === "GOOD"){
+                good++;
+            }
+
+            if(selected.value === "NO GOOD"){
+                ng++;
+            }
+
+            if(selected.value === "NO RUN"){
+                nr++;
+            }
+
+        }
+
+    }
+
+    document.getElementById(
+        "goodCount"
+    ).innerText = good;
+
+    document.getElementById(
+        "ngCount"
+    ).innerText = ng;
+
+    document.getElementById(
+        "nrCount"
+    ).innerText = nr;
+
+    const percent =
+    Math.round(
+        (completed / totalItems) * 100
+    );
+
+    const progress =
+    document.getElementById(
+        "progressFill"
+    );
+
+    progress.style.width =
+    percent + "%";
+
+    progress.innerText =
+    percent + "%";
+
+}
+
+
+/* EXPORT CSV */
+
+document
+.getElementById("exportBtn")
+.addEventListener(
+    "click",
+    exportCSV
+);
+
+function exportCSV(){
+
+    for(let i = 1; i <= 15; i++){
+
+        const selected =
+        document.querySelector(
+            `input[name="a${i}"]:checked`
+        );
+
+        const remark =
+        document.querySelector(
+            `.remarks[data-item="${i}"]`
+        );
+
+        if(
+            selected &&
+            selected.value === "NO GOOD" &&
+            remark &&
+            remark.value.trim() === ""
+        ){
+
+            alert(
+                `Remarks is required for Item ${i}`
+            );
+
+            remark.focus();
+
+            return;
+
+        }
+
+    }
+
+    let csv = [];
+
+    csv.push(
+        "Operator,Employee ID,Date,Shift,Process,Workstation,Supervisor,Status"
+    );
+
+    csv.push(
+        document.getElementById("operator").value + "," +
+        document.getElementById("empid").value + "," +
+        document.getElementById("date").value + "," +
+        document.getElementById("shift").value + "," +
+        document.getElementById("process").value + "," +
+        document.getElementById("workstation").value + "," +
+        document.getElementById("supervisorName").value + "," +
+        document.getElementById("approvalStatus").value
+    );
+
+    csv.push("");
+
+    csv.push(
+        "Question No,Result,Remarks"
+    );
+
+    for(let i = 1; i <= 15; i++){
+
+        const selected =
+        document.querySelector(
+            `input[name="a${i}"]:checked`
+        );
+
+        const remark =
+        document.querySelector(
+            `.remarks[data-item="${i}"]`
+        );
+
+        csv.push(
+            i + "," +
+            (selected ? selected.value : "Blank") +
+            "," +
+            (remark ? remark.value : "")
+        );
+
+    }
+
+    const blob = new Blob(
+        [csv.join("\n")],
+        {
+            type: "text/csv;charset=utf-8;"
+        }
+    );
+
+    const link =
+    document.createElement("a");
+
+    link.href =
+    URL.createObjectURL(blob);
+
+link.download = "MES-Checksheet.csv";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+}
+
+</script>
+
+</body>
+
+</html>
