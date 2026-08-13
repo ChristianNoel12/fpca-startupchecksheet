@@ -271,6 +271,11 @@ select:focus{
 .approval-section{
     animation:fadeUp .5s ease;
 }
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
 
 </style>
 
@@ -305,11 +310,22 @@ select:focus{
         <input type="date" id="date">
     </div>
 
+<div class="field">
+    <label>Shift</label>
+    <select id="shift">
+        <option>Day Shift</option>
+        <option>Night Shift</option>
+    </select>
+</div>
+
+<div class="form-row">
+
     <div class="field">
-        <label>Shift</label>
-        <select id="shift">
-            <option>Day Shift</option>
-            <option>Night Shift</option>
+        <label>Workstation</label>
+        <select id="workstation">
+            <option value="">Select Workstation</option>
+            <option value="Frontend">Frontend</option>
+            <option value="Backend">Backend</option>
         </select>
     </div>
 
@@ -320,14 +336,7 @@ select:focus{
         </select>
     </div>
 
-    <div class="field">
-        <label>Workstation</label>
-        <select id="workstation">
-            <option value="">Select Workstation</option>
-            <option value="Frontend">Frontend</option>
-            <option value="Backend">Backend</option>
-        </select>
-    </div>
+</div>
 
 </div>
 
