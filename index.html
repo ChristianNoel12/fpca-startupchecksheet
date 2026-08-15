@@ -863,8 +863,56 @@ document
     "click",
     exportCSV
 );
+async function saveToFirebase(){
 
-function exportCSV(){
+    const data = {
+
+        operator:
+        document.getElementById("operator").value,
+
+        employeeId:
+        document.getElementById("empid").value,
+
+        date:
+        document.getElementById("date").value,
+
+        shift:
+        document.getElementById("shift").value,
+
+        workstation:
+        document.getElementById("workstation").value,
+
+        process:
+        document.getElementById("process").value,
+
+        supervisor:
+        document.getElementById("supervisorName").value,
+
+        approvalStatus:
+        document.getElementById("approvalStatus").value,
+
+        timestamp:
+        new Date().toISOString()
+        
+
+    };
+    
+
+    await addDoc(
+        collection(
+            db,
+            "startup_verification"
+        ),
+        data
+    );
+    alert(
+"Saved to Firebase Successfully!"
+);
+
+}
+async function exportCSV(){
+
+    await saveToFirebase();
 
     for(let i = 1; i <= 15; i++){
 
@@ -963,6 +1011,42 @@ link.download = "MES-Checksheet.csv";
     document.body.removeChild(link);
 
 }
+
+</script>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc
+}
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyAlRH4Oz-RSoYzANfOZ1icNeXjOCEkqH-c",
+
+authDomain: "fpca---startup---checksheet.firebaseapp.com",
+
+projectId: "fpca---startup---checksheet",
+
+storageBucket: "fpca---startup---checksheet.firebasestorage.app",
+
+messagingSenderId: "151525817490",
+
+appId: "1:151525817490:web:c52655d526f0fdcd37ba4b"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.addDoc = addDoc;
+window.collection = collection;
 
 </script>
 
