@@ -867,37 +867,43 @@ async function saveToFirebase(){
 
     const data = {
 
-        operator:
-        document.getElementById("operator").value,
+    operator:
+    document.getElementById("operator").value,
 
-        employeeId:
-        document.getElementById("empid").value,
+    employeeId:
+    document.getElementById("empid").value,
 
-        date:
-        document.getElementById("date").value,
+    date:
+    document.getElementById("date").value,
 
-        shift:
-        document.getElementById("shift").value,
+    shift:
+    document.getElementById("shift").value,
 
-        workstation:
-        document.getElementById("workstation").value,
+    workstation:
+    document.getElementById("workstation").value,
 
-        process:
-        document.getElementById("process").value,
+    process:
+    document.getElementById("process").value,
 
-        supervisor:
-        document.getElementById("supervisorName").value,
+    supervisor:
+    document.getElementById("supervisorName").value,
 
-        approvalStatus:
-        document.getElementById("approvalStatus").value,
-        approvedDate:
-document.getElementById("approvedDate").value,
+    approvalStatus:
+    document.getElementById("approvalStatus").value,
 
-        timestamp:
-        new Date().toISOString()
-        
+    approvedDate:
+    document.getElementById("approvedDate").value,
 
-    };
+    timestamp:
+    new Date().toISOString(),
+
+    deleted:false,
+    deletedBy:"",
+    deleteReason:"",
+    deletedDate:""
+
+};
+
     
 
     await addDoc(
