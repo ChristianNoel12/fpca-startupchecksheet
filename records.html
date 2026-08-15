@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>FPCA Records Dashboard</title>
+
+<style>
+
+body{
+    font-family:Segoe UI;
+    background:#f1f5f9;
+    padding:20px;
+}
+
+h1{
+    color:#003b8e;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th{
+    background:#003b8e;
+    color:white;
+    padding:12px;
+}
+
+td{
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+tr:hover{
+    background:#f8fafc;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>FPCA Submission Records</h1>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Operator</th>
+<th>Employee ID</th>
+<th>Workstation</th>
+<th>Process</th>
+<th>Shift</th>
+<th>Status</th>
+<th>Submitted Time</th>
+
+</tr>
+
+</thead>
+
+<tbody id="recordsTable">
+
+</tbody>
+
+</table>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyAlRH4Oz-RSoYzANfOZ1icNeXjOCEkqH-c",
+
+authDomain: "fpca---startup---checksheet.firebaseapp.com",
+
+projectId: "fpca---startup---checksheet",
+
+storageBucket: "fpca---startup---checksheet.firebasestorage.app",
+
+messagingSenderId: "151525817490",
+
+appId: "1:151525817490:web:c52655d526f0fdcd37ba4b"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+async function loadRecords(){
+
+    const snapshot =
+    await getDocs(
+        collection(
+            db,
+            "startup_verification"
+        )
+    );
+
+    let html = "";
+
+    snapshot.forEach(doc => {
+
+        const data = doc.data();
+
+        html += `
+
+        <tr>
+
+            <td>${data.operator || ""}</td>
+
+            <td>${data.employeeId || ""}</td>
+
+            <td>${data.workstation || ""}</td>
+
+            <td>${data.process || ""}</td>
+
+            <td>${data.shift || ""}</td>
+
+            <td>${data.approvalStatus || ""}</td>
+
+            <td>${data.timestamp || ""}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById(
+        "recordsTable"
+    ).innerHTML = html;
+
+}
+
+loadRecords();
+
+</script>
+
+</body>
+
+</html>
