@@ -44,7 +44,8 @@ The platform is designed around FPCA manufacturing requirements, focusing on pro
 ## Developed By
 
 **CNP**
-- Process Engineer
+
+Process Engineer
 
 ### Disclaimer
 This project was developed for educational, demonstration, learning, and portfolio purposes. No proprietary company information, customer information, confidential manufacturing data, internal procedures, or restricted business information is included in this repository.
