@@ -43,10 +43,9 @@ The platform is designed around FPCA manufacturing requirements, focusing on pro
 
 ## Developed By
 
-**Christian Noel**  
-**Process Engineering Department**  
-**FPCA Manufacturing Operations**  
-**Ionics EMS Inc.**
+**CNP**
 
-**Version 1.0**  
-**FPCA Startup Verification Monitoring System**
+### Disclaimer
+This project was developed for educational, demonstration, learning, and portfolio purposes. No proprietary company information, customer information, confidential manufacturing data, internal procedures, or restricted business information is included in this repository.
+
+All sample records, workflows, dashboards, and reports are intended solely to demonstrate system functionality and software development capabilities.
