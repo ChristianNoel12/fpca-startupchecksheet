@@ -48,6 +48,26 @@ tr:hover{
 
 <h1>FPCA Submission Records</h1>
 
+<h2 id="totalRecords">
+Total Records: 0
+</h2>
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search Operator..."
+onkeyup="filterTable()">
+
+<button id="exportRecordsBtn">
+
+📊 EXPORT RECORDS
+
+</button>
+
+
+
+<h1>FPCA Submission Records</h1>
+
 <table>
 
 <thead>
@@ -60,6 +80,7 @@ tr:hover{
 <th>Process</th>
 <th>Shift</th>
 <th>Status</th>
+<th>Approved By</th>
 <th>Submitted Time</th>
 
 </tr>
@@ -134,14 +155,23 @@ async function loadRecords(){
             <td>${data.shift || ""}</td>
 
             <td>${data.approvalStatus || ""}</td>
+            <td>${data.supervisor || ""}</td>
 
-            <td>${data.timestamp || ""}</td>
+        <td>
+${data.timestamp
+ ? new Date(data.timestamp).toLocaleString()
+ : ""}
+</td>
 
         </tr>
 
         `;
 
     });
+    document.getElementById(
+"totalRecords"
+).innerText =
+`Total Records: ${snapshot.size}`;
 
     document.getElementById(
         "recordsTable"
@@ -150,6 +180,95 @@ async function loadRecords(){
 }
 
 loadRecords();
+document
+.getElementById("exportRecordsBtn")
+.addEventListener(
+    "click",
+    exportRecords
+);
+function exportRecords(){
+
+    alert("EXPORT CLICKED");
+
+let csv = [];
+
+csv.push(
+"Operator,Employee ID,Workstation,Process,Shift,Status,Submitted Time"
+);
+
+document
+.querySelectorAll("#recordsTable tr")
+.forEach(row=>{
+
+let cols =
+row.querySelectorAll("td");
+
+if(cols.length){
+
+let rowData = [];
+
+cols.forEach(col=>{
+
+rowData.push(col.innerText);
+
+});
+
+csv.push(
+rowData.join(",")
+);
+
+}
+
+});
+
+const blob =
+new Blob(
+[csv.join("\n")],
+{
+type:"text/csv"
+}
+);
+
+const link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
+"FPCA-Submission-Records.csv";
+
+link.click();
+
+}
+
+function filterTable(){
+
+const value =
+document
+.getElementById("searchInput")
+.value
+.toLowerCase();
+
+const rows =
+document.querySelectorAll(
+"#recordsTable tr"
+);
+
+rows.forEach(row=>{
+
+row.style.display =
+row.innerText
+.toLowerCase()
+.includes(value)
+
+? ""
+
+: "none";
+
+});
+
+}
 
 </script>
 
