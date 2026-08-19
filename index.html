@@ -632,23 +632,43 @@ select:focus{
 
 <div class="field">
 <label>Supervisor Name</label>
-<input type="text" id="supervisorName">
+
+<select id="supervisorName">
+
+    <option value="">
+        Select Approver
+    </option>
+
+    <option>
+        P6 Production 3
+    </option>
+
+    <option>
+        P6 Process Engineering 3
+    </option>
+
+    <option>
+P6 Equipment Engineering 3
+</option>
+
+    <option>
+        P6 Quality Control 3
+    </option>
+
+</select>
 </div>
 
 <div class="field">
 <label>Status</label>
 
 <select id="approvalStatus">
-<option>Pending</option>
-<option>Approved</option>
-<option>Rejected</option>
+
+<option selected>
+Pending
+</option>
+
 </select>
 
-</div>
-
-<div class="field">
-<label>Date Approved</label>
-<input type="datetime-local" id="approvedDate">
 </div>
 
 </div>
@@ -661,38 +681,50 @@ class="export-btn">
 📄 EXPORT CSV
 
 </button>
+<button
+id="submitBtn"
+class="export-btn"
+style="
+background:#16a34a;
+margin-left:10px;
+">
+
+✅ SUBMIT
+
+</button>
 
 </div>
+
+</script>
+
 <script>
 
 /* FPCA WORKSTATION PROCESS */
 
 const processData = {
 
-    Frontend: [
-        "Part Preparation",
-        "Flex Baking",
-        "SPA Palletizing",
-        "SPI",
-        "SMT",
-        "Reflow Curing",
-        "XRAY"
-    ],
+Frontend: [
+    "Part Preparation",
+    "Flex Baking",
+    "SPA Palletizing",
+    "SPI",
+    "SMT / Reflow",
+    "XRAY"
+],
 
     Backend: [
-        "Encapsulation / Underfill",
-        "Post Baking",
-        "Washing",
-        "Damper Attachment / Damper Push",
-        "Label Attachment / Label Scanning",
-        "FT",
-        "FVI",
-        "SI",
-        "OBA",
-        "SSI",
-        "Scanning",
-        "Packing"
-    ]
+    "Encapsulation / Underfill",
+    "Post Baking",
+    "Washing",
+    "Damper Attachment / Damper Push",
+    "Label Attachment / Label Scanning",
+    "FT",
+    "FVI",
+    "SI",
+    "OBA / SSI",
+    "Scanning",
+    "Packing"
+]
 
 };
 
@@ -856,7 +888,6 @@ function updateDashboard(){
 
 
 /* EXPORT CSV */
-
 document
 .getElementById("exportBtn")
 .addEventListener(
@@ -891,9 +922,6 @@ async function saveToFirebase(){
     approvalStatus:
     document.getElementById("approvalStatus").value,
 
-    approvedDate:
-    document.getElementById("approvedDate").value,
-
     timestamp:
     new Date().toISOString(),
 
@@ -913,6 +941,7 @@ async function saveToFirebase(){
         ),
         data
     );
+
     alert(
 "Saved to Firebase Successfully!"
 );
@@ -1032,8 +1061,49 @@ link.download = "MES-Checksheet.csv";
     document.body.removeChild(link);
 
 }
+document
+.getElementById("submitBtn")
+.addEventListener(
+    "click",
+    submitRecord
+);
+
+async function submitRecord(){
+
+    let unanswered = [];
+
+    for(let i = 1; i <= 15; i++){
+
+        const selected =
+        document.querySelector(
+            `input[name="a${i}"]:checked`
+        );
+
+        if(!selected){
+
+            unanswered.push(i);
+
+        }
+
+    }
+
+    if(unanswered.length > 0){
+
+        alert(
+            "Please complete all checklist items.\n\nUnanswered: " +
+            unanswered.join(", ")
+        );
+
+        return;
+
+    }
+
+    await saveToFirebase();
+
+}
 
 </script>
+
 <script type="module">
 
 import { initializeApp }
@@ -1048,6 +1118,7 @@ query,
 where
 }
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
 
 const firebaseConfig = {
 
