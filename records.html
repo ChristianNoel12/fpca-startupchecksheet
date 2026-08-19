@@ -500,6 +500,37 @@ cursor:pointer;
 
 </button>
 
+<button
+id="supervisorBtn"
+style="
+background:#0ea5e9;
+color:white;
+border:none;
+padding:12px 22px;
+border-radius:12px;
+font-weight:600;
+cursor:pointer;
+">
+
+👨 SUPERVISOR
+
+</button>
+<button
+id="notifyBtn"
+style="
+background:#8b5cf6;
+color:white;
+border:none;
+padding:12px 22px;
+border-radius:12px;
+font-weight:600;
+cursor:pointer;
+">
+
+📧 NOTIFY APPROVER
+
+</button>
+
 </div>
 
 <table>
@@ -529,6 +560,212 @@ cursor:pointer;
 </div>
 
 </table>
+<div
+id="supervisorModal"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+<div
+style="
+background:#f8fafc;
+padding:30px;
+border-radius:20px;
+width:750px;
+max-height:80vh;
+overflow:auto;
+box-shadow:0 20px 50px rgba(0,0,0,.25);
+border:1px solid #e2e8f0;
+">
+
+<h2 style="
+color:#003b8e;
+margin-top:0;
+margin-bottom:20px;
+font-size:26px;
+font-weight:700;
+">
+👨 Supervisor Approval Queue
+</h2>
+<select
+id="supervisorFilter"
+onchange="loadSupervisorQueue()"
+style="
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #cbd5e1;
+font-size:15px;
+margin-bottom:20px;
+background:white;
+color:#1e293b;
+font-weight:500;
+">
+
+<option value="">
+Select Approver
+</option>
+
+<option>
+P6 Production 3
+</option>
+
+<option>
+P6 Process Engineering 3
+</option>
+
+<option>
+P6 Equipment Engineering 3
+</option>
+
+<option>
+P6 Quality Control 3
+</option>
+
+</select>
+
+<div id="supervisorList">
+
+No records selected.
+
+</div>
+
+<br>
+
+<button
+onclick="
+document.getElementById(
+'supervisorModal'
+).style.display='none';
+"
+style="
+background:#003b8e;
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:10px;
+font-weight:600;
+cursor:pointer;
+"
+>
+
+Close
+
+</button>
+</div>
+
+</div>
+<div
+id="notifyModal"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+<div
+style="
+background:white;
+padding:25px;
+border-radius:15px;
+width:500px;
+box-shadow:0 15px 40px rgba(0,0,0,.25);
+">
+
+<h2 style="
+color:#003b8e;
+margin-top:0;
+">
+📧 Notify Approver
+</h2>
+
+<select
+id="notifyApprover"
+style="
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #d1d5db;
+margin-bottom:15px;
+">
+
+<option value="">
+Select Approver
+</option>
+
+<option>
+P6 Production 3
+</option>
+
+<option>
+P6 Process Engineering 3
+</option>
+
+<option>
+P6 Equipment Engineering 3
+</option>
+
+<option>
+P6 Quality Control 3
+</option>
+
+</select>
+
+<button
+id="sendNotifyBtn"
+style="
+background:#8b5cf6;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+">
+
+📧 Send Notification
+
+</button>
+
+<button
+onclick="
+document.getElementById('notifyModal').style.display='none';
+"
+style="
+margin-left:10px;
+background:#64748b;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+">
+
+Close
+
+</button>
+
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 <script type="module">
 
 import { initializeApp }
@@ -545,6 +782,9 @@ query
 }
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
+emailjs.init(
+"nG1UVL4pc4mSBNqQ1"
+);
 const firebaseConfig = {
 
 apiKey: "AIzaSyAlRH4Oz-RSoYzANfOZ1icNeXjOCEkqH-c",
@@ -699,6 +939,34 @@ document
 .addEventListener(
     "click",
     exportAuditLogs
+);
+document
+.getElementById("supervisorBtn")
+.addEventListener(
+    "click",
+    function(){
+
+        document
+        .getElementById(
+            "supervisorModal"
+        )
+        .style.display =
+        "flex";
+
+    }
+);
+document
+.getElementById("notifyBtn")
+.addEventListener(
+    "click",
+    function(){
+
+        document
+        .getElementById("notifyModal")
+        .style.display =
+        "flex";
+
+    }
 );
 async function exportRecords(){
 
@@ -1070,6 +1338,361 @@ link.click();
 document.body.removeChild(link);
 
 URL.revokeObjectURL(url);
+
+}
+window.loadSupervisorQueue = async function(){
+
+    const approver =
+    document.getElementById(
+        "supervisorFilter"
+    ).value;
+
+    if(!approver){
+
+        document.getElementById(
+            "supervisorList"
+        ).innerHTML =
+        "No supervisor selected.";
+
+        return;
+
+    }
+
+    const snapshot =
+    await getDocs(
+        collection(
+            db,
+            "startup_verification"
+        )
+    );
+
+    let html = "";
+
+    snapshot.forEach(doc=>{
+
+        const data = doc.data();
+
+        if(
+            data.supervisor === approver
+            &&
+            data.approvalStatus === "Pending"
+            &&
+            data.deleted !== true
+        ){
+
+html += `
+
+<div style="
+background:white;
+border-left:6px solid #003b8e;
+padding:18px;
+margin-bottom:15px;
+border-radius:14px;
+box-shadow:0 6px 15px rgba(0,0,0,.08);
+">
+
+<h3 style="
+margin:0 0 10px;
+color:#003b8e;
+">
+👤 ${data.operator || ""}
+</h3>
+
+<p style="
+margin:5px 0;
+color:#1e293b;
+font-weight:600;
+">
+Employee ID:
+${data.employeeId || ""}
+</p>
+
+<p style="
+margin:5px 0;
+color:#1e293b;
+">
+Workstation:
+${data.workstation || ""}
+</p>
+
+<p style="
+margin:5px 0;
+color:#1e293b;
+">
+Process:
+${data.process || ""}
+</p>
+
+<p style="
+margin:5px 0;
+color:#f59e0b;
+font-weight:700;
+">
+Status:
+${data.approvalStatus || ""}
+</p>
+
+<br>
+
+<br>
+
+<b>Process:</b>
+${data.process || ""}
+
+<br>
+
+<b>Status:</b>
+${data.approvalStatus || ""}
+
+<br><br>
+
+<button
+onclick="approveRecord('${doc.id}')"
+style="
+background:#16a34a;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:8px;
+cursor:pointer;
+margin-right:10px;
+">
+
+✅ APPROVE
+
+</button>
+
+<button
+onclick="rejectRecord('${doc.id}')"
+style="
+background:#dc2626;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:8px;
+cursor:pointer;
+">
+
+❌ REJECT
+
+</button>
+
+</div>
+
+`;
+
+        }
+
+    });
+
+    if(html === ""){
+
+        html =
+        "No pending approvals.";
+
+    }
+
+    document.getElementById(
+        "supervisorList"
+    ).innerHTML = html;
+
+}
+function getApproverEmail(approver){
+
+    const emails = {
+
+        "P6 Production 3":
+        "p6.production.3@ionics-ems.com",
+
+        "P6 Process Engineering 3":
+        "p6.process.eng3@ionics-ems.com",
+
+        "P6 Equipment Engineering 3":
+        "p6.equipment.eng3@ionics-ems.com",
+
+        "P6 Quality Control 3":
+        "p6.quality.control.3@ionics-ems.com"
+
+    };
+
+    return emails[approver] || "";
+
+}
+document
+.getElementById("sendNotifyBtn")
+.addEventListener(
+    "click",
+    function(){
+
+        const approver =
+        document.getElementById(
+            "notifyApprover"
+        ).value;
+
+        if(!approver){
+
+            alert(
+                "Please select an approver."
+            );
+
+            return;
+
+        }
+
+        emailjs.send(
+
+            "service_u2izu9g",
+
+            "template_3mb6n06",
+
+            {
+                to_email:
+                getApproverEmail(
+                    approver
+                ),
+
+                supervisor:
+                approver
+            }
+
+        ).then(
+
+            async function(){
+
+                await addDoc(
+                    collection(
+                        db,
+                        "audit_logs"
+                    ),
+                    {
+                        action:"EMAIL_NOTIFICATION",
+                        approver:approver,
+                        email:getApproverEmail(
+                            approver
+                        ),
+                        timestamp:
+                        new Date().toISOString()
+                    }
+                );
+
+                alert(
+                    "Notification Sent Successfully"
+                );
+
+            },
+
+            function(error){
+
+                console.error(error);
+
+                alert(
+                    "Failed to Send Notification"
+                );
+
+            }
+
+        );
+
+    }
+);
+window.approveRecord = async function(recordId){
+
+    const remarks =
+    prompt(
+        "Enter Approval Remarks"
+    );
+
+    if(!remarks){
+
+        alert(
+            "Approval Remarks Required"
+        );
+
+        return;
+
+    }
+
+    await updateDoc(
+        doc(
+            db,
+            "startup_verification",
+            recordId
+        ),
+        {
+            approvalStatus:"Approved",
+            approvalRemarks:remarks,
+            approvalDate:
+            new Date().toISOString()
+        }
+    );
+
+await addDoc(
+    collection(db,"audit_logs"),
+    {
+        action:"APPROVE_RECORD",
+        recordId:recordId,
+        remarks:remarks,
+        timestamp:new Date().toISOString()
+    }
+);
+
+    alert(
+        "Record Approved"
+    );
+
+    loadRecords();
+
+    loadSupervisorQueue();
+
+}
+window.rejectRecord = async function(recordId){
+
+    const reason =
+    prompt(
+        "Enter Rejection Reason"
+    );
+
+    if(!reason){
+
+        alert(
+            "Rejection Reason Required"
+        );
+
+        return;
+
+    }
+
+    await updateDoc(
+        doc(
+            db,
+            "startup_verification",
+            recordId
+        ),
+        {
+            approvalStatus:"Rejected",
+            rejectionReason:reason,
+            approvalDate:
+            new Date().toISOString()
+        }
+    );
+
+await addDoc(
+    collection(db,"audit_logs"),
+    {
+        action:"REJECT_RECORD",
+        recordId:recordId,
+        reason:reason,
+        timestamp:new Date().toISOString()
+    }
+);
+
+alert(
+    "Record Rejected"
+);
+
+    loadRecords();
+
+    loadSupervisorQueue();
 
 }
 </script>
